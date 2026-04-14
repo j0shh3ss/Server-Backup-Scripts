@@ -13,7 +13,7 @@ Designed to be:
 ## ✨ Features
 
 * ⏱️ **Automated hourly, daily, and weekly backups**
-* 🔄 **Full restore support** (recover your server instantly)
+* 🔄 **Full server restore support** (complete recovery)
 * 🧰 **Interactive installer** (no manual config needed)
 * 🧹 **Automatic cleanup** (prevents disk overflow)
 * 📦 **ZSTD compression** (fast and efficient)
@@ -67,13 +67,19 @@ Run anytime:
 ## 🔄 Restore a Backup
 
 ```bash
-./restore.sh <backup_file.tar.zst>
+./restore.sh
 ```
 
 Example:
 
 ```bash
-./restore.sh world_hourly-2026-04-14_15.tar.zst
+./restore.sh
+Tmux session name [Minecraft]: World
+Minecraft server root directory (contains world/, versions/, config/, etc.): [/mnt/server/minecraft]: /mnt/server/minecraft
+Path to backup file (.tar.zst): /mnt/server/minecraft/backups/hourly/server_hourly-2026-04-14_09.tar.zst
+⚠️ WARNING: This will OVERWRITE your current server files!
+Continue? (y/n): y
+✅ Restore complete!
 ```
 
 ### What this does:
@@ -85,6 +91,19 @@ Example:
 ⚠️ **This will overwrite your current server files**
 
 ---
+
+### 📌 Important
+
+- The directory you enter must be your **server root folder**
+- This is the folder that contains files like:
+  - `server.jar`
+  - `world/`
+  - `plugins/` (if applicable)
+
+Example:
+
+Correct:   /mnt/server/minecraft  
+Wrong:     /mnt/server/minecraft/world
 
 ## ⏱️ Cron Jobs
 
@@ -137,7 +156,7 @@ Options:
 * `zstd`
 * `cron`
 
-Installer will attempt to install missing dependencies.
++ Installer assumes a Debian/Ubuntu-based system (`apt`)
 
 ---
 

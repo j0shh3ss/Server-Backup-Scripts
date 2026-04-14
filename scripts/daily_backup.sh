@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# What each variable is for:
-# Same thing as hourly backup, please change these variables to fit your server setup. The comments explain what each variable is for and how to use it.
-# SOURCE_DIR = The directory where your hourly backups are stored. This should be the same location as the BACKUP_DIR variable in the hourly backup script.
-# DEST_DIR = The directory where you want to store the daily backups. This should be a different location than the hourly backups to prevent issues with copying while the server is running.
-# LOG_DIR = The directory where you want to store the backup logs. This should be a different location than the server files to prevent issues with copying while the server is running.
-
 set -euo pipefail
 
 SOURCE_DIR="/mnt/server/minecraft/backups/hourly"

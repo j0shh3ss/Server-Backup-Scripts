@@ -9,7 +9,7 @@ echo "==== Minecraft Backup Restore ===="
 read -p "Tmux session name [Minecraft]: " SESSION
 SESSION=${SESSION:-Minecraft}
 
-read -p "Minecraft server directory [/mnt/server/minecraft]: " SERVER_DIR
+read -p "Minecraft server root directory (contains world/, versions/, config/, etc.): [/mnt/server/minecraft]: " SERVER_DIR
 SERVER_DIR=${SERVER_DIR:-/mnt/server/minecraft}
 
 read -p "Path to backup file (.tar.zst): " BACKUP_FILE
@@ -18,6 +18,17 @@ read -p "Path to backup file (.tar.zst): " BACKUP_FILE
 
 if [ ! -f "$BACKUP_FILE" ]; then
     echo "❌ Backup file not found!"
+    exit 1
+fi
+
+if [[ "$SERVER_DIR" == "/" || -z "$SERVER_DIR" ]]; then
+    echo "Refusing to operate on invalid directory"
+    exit 1
+fi
+
+if [ ! -d "$SERVER_DIR/world" ]; then
+    echo "❌ ERROR: '$SERVER_DIR' does not contain a world/ directory"
+    echo "You likely entered the wrong directory."
     exit 1
 fi
 
@@ -51,6 +62,12 @@ sleep 3
 echo "Extracting backup..."
 tar -I zstd -xf "$BACKUP_FILE" -C "$TMP_DIR"
 
+# Detect if backup contains a world folder
+if [ ! -d "$TMP_DIR/world" ]; then
+    echo "❌ ERROR: Backup does not contain a world/ directory"
+    exit 1
+fi
+
 # ---- RESTORE FILES ----
 
 echo "Restoring files..."
@@ -59,7 +76,7 @@ echo "Restoring files..."
 find "$SERVER_DIR" -mindepth 1 -delete
 
 # Copy restored files into place
-cp -a "$TMP_DIR/"* "$SERVER_DIR/"
+cp -a "$TMP_DIR"/. "$SERVER_DIR/"
 
 # ---- CLEANUP ----
 

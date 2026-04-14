@@ -9,8 +9,8 @@ echo "==== Minecraft Backup Script Installer ===="
 read -p "Tmux session name [Minecraft]: " SESSION
 SESSION=${SESSION:-Minecraft}
 
-read -p "Minecraft server directory (contains world) [/mnt/server/minecraft/world]: " MC_DIR
-MC_DIR=${MC_DIR:-/mnt/server/minecraft/world}
+read -p "Path to your server root folder [/mnt/server/minecraft]: " MC_DIR
+MC_DIR=${MC_DIR:-/mnt/server/minecraft}
 
 read -p "Backup base directory [/mnt/server/minecraft/backups]: " BACKUP_BASE
 BACKUP_BASE=${BACKUP_BASE:-/mnt/server/minecraft/backups}
@@ -21,12 +21,22 @@ DAILY_DIR="$BACKUP_BASE/daily"
 WEEKLY_DIR="$BACKUP_BASE/weekly"
 LOG_DIR="$BACKUP_BASE/logs"
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
 echo ""
 echo "Using configuration:"
 echo "SESSION=$SESSION"
 echo "MC_DIR=$MC_DIR"
 echo "BACKUP_BASE=$BACKUP_BASE"
 echo ""
+
+
+# ---- VALIDATION ----
+
+if [ ! -d "$MC_DIR" ]; then
+    echo "❌ ERROR: Server directory does not exist"
+    exit 1
+fi
 
 # ---- CREATE DIRECTORIES ----
 
@@ -57,20 +67,20 @@ fi
 echo "Configuring scripts..."
 
 # Hourly
-sed -i "s|^SESSION=.*|SESSION=\"$SESSION\"|" hourly_backup.sh
-sed -i "s|^MC_DIR=.*|MC_DIR=\"$MC_DIR\"|" hourly_backup.sh
-sed -i "s|^BACKUP_DIR=.*|BACKUP_DIR=\"$HOURLY_DIR\"|" hourly_backup.sh
-sed -i "s|^LOG_DIR=.*|LOG_DIR=\"$LOG_DIR\"|" hourly_backup.sh
+sed -i "s|^SESSION=.*|SESSION=\"$SESSION\"|" "$SCRIPT_DIR/hourly_backup.sh"
+sed -i "s|^MC_DIR=.*|MC_DIR=\"$MC_DIR\"|" "$SCRIPT_DIR/hourly_backup.sh"
+sed -i "s|^BACKUP_DIR=.*|BACKUP_DIR=\"$HOURLY_DIR\"|" "$SCRIPT_DIR/hourly_backup.sh"
+
 
 # Daily
-sed -i "s|^SOURCE_DIR=.*|SOURCE_DIR=\"$HOURLY_DIR\"|" daily_backup.sh
-sed -i "s|^DEST_DIR=.*|DEST_DIR=\"$DAILY_DIR\"|" daily_backup.sh
-sed -i "s|^LOG_DIR=.*|LOG_DIR=\"$LOG_DIR\"|" daily_backup.sh
+sed -i "s|^SOURCE_DIR=.*|SOURCE_DIR=\"$HOURLY_DIR\"|" "$SCRIPT_DIR/daily_backup.sh"
+sed -i "s|^DEST_DIR=.*|DEST_DIR=\"$DAILY_DIR\"|" "$SCRIPT_DIR/daily_backup.sh"
+sed -i "s|^LOG_DIR=.*|LOG_DIR=\"$LOG_DIR\"|" "$SCRIPT_DIR/daily_backup.sh"
 
 # Weekly
-sed -i "s|^SOURCE_DIR=.*|SOURCE_DIR=\"$DAILY_DIR\"|" weekly_backup.sh
-sed -i "s|^DEST_DIR=.*|DEST_DIR=\"$WEEKLY_DIR\"|" weekly_backup.sh
-sed -i "s|^LOG_DIR=.*|LOG_DIR=\"$LOG_DIR\"|" weekly_backup.sh
+sed -i "s|^SOURCE_DIR=.*|SOURCE_DIR=\"$DAILY_DIR\"|" "$SCRIPT_DIR/weekly_backup.sh"
+sed -i "s|^DEST_DIR=.*|DEST_DIR=\"$WEEKLY_DIR\"|" "$SCRIPT_DIR/weekly_backup.sh"
+sed -i "s|^LOG_DIR=.*|LOG_DIR=\"$LOG_DIR\"|" "$SCRIPT_DIR/weekly_backup.sh"
 
 # ---- PERMISSIONS ----
 
@@ -85,10 +95,16 @@ if [[ "$INSTALL_CRON" =~ ^[Yy]$ ]]; then
     echo "Setting up cron jobs..."
 
     SCRIPT_DIR=$(pwd)
+    TMP_CRON=$(mktemp)
 
-    (crontab -l 2>/dev/null; echo "0 * * * * $SCRIPT_DIR/hourly_backup.sh") | crontab -
-    (crontab -l 2>/dev/null; echo "15 3 * * * $SCRIPT_DIR/daily_backup.sh") | crontab -
-    (crontab -l 2>/dev/null; echo "30 3 * * 1 $SCRIPT_DIR/weekly_backup.sh") | crontab -
+    crontab -l 2>/dev/null | grep -v "hourly_backup.sh" | grep -v "daily_backup.sh" | grep -v "weekly_backup.sh" > "$TMP_CRON"
+
+    echo "0 * * * * $SCRIPT_DIR/hourly_backup.sh" >> "$TMP_CRON"
+    echo "15 3 * * * $SCRIPT_DIR/daily_backup.sh" >> "$TMP_CRON"
+    echo "30 3 * * 1 $SCRIPT_DIR/weekly_backup.sh" >> "$TMP_CRON"
+
+    crontab "$TMP_CRON"
+    rm "$TMP_CRON"
 
     echo "Cron jobs installed."
 fi

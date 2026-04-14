@@ -1,15 +1,5 @@
 #!/bin/bash
 
-# Change MC_DIR to match your server directory (the folder containing your world)
-
-# What each variable is for:
-# Session = Tmux session name of the server you want to backup. This is used to send commands to the server to save and stop saving while copying files.
-# MC_DIR = The directory where your Minecraft server files are located. This should be the directory that contains the world folder and other server files.
-# BACKUP_DIR = The directory where you want to store the hourly backups. This should be a different location than the server files to prevent issues with copying while the server is running.
-# TIMESTAMP = DO NOT CHANGE! A timestamp to append to the backup filename. This is used to keep track of when each backup was made.
-# TMP_DIR = A temporary directory to copy the server files to before compressing. This is used to prevent issues with copying while the server is running. This should also be a different location than the server files.
-# LOG_DIR = The directory where you want to store the backup logs. This should be a different location than the server files to prevent issues with copying while the server is running.
-
 set -euo pipefail
 
 command -v tmux >/dev/null || { echo "tmux not installed"; exit 1; }
@@ -17,13 +7,11 @@ command -v zstd >/dev/null || { echo "zstd not installed"; exit 1; }
 command -v tar >/dev/null || { echo "tar not installed"; exit 1; }
 
 SESSION="Minecraft"
-MC_DIR="/mnt/server/minecraft/world"
+MC_DIR="/mnt/server/minecraft"
 BACKUP_DIR="/mnt/server/minecraft/backups/hourly"
 TIMESTAMP=$(date +"%Y-%m-%d_%H")
 TMP_DIR="/mnt/server/minecraft/backups/tmp_$TIMESTAMP"
 LOG_DIR="/mnt/server/minecraft/backups/logs"
-
-exec >> /var/log/mc-backup-hourly.log 2>&1
 
 trap 'tmux send-keys -t "$SESSION" "save-on" Enter || true' EXIT
 
@@ -45,9 +33,9 @@ tmux send-keys -t "$SESSION" "save-on" Enter || true
 sleep 5
 
 #compress
-#Can change world before _hourly to the name of your world, this is just the name of the backup file and does not affect the backup process.
+#can change "server_hourly" in the output filename if desired, this does NOT affect what gets backed up.
 tar -I 'zstd -10' -cf \
-"$BACKUP_DIR/world_hourly-$TIMESTAMP.tar.zst" \
+"$BACKUP_DIR/server_hourly-$TIMESTAMP.tar.zst" \
 -C "$TMP_DIR" .
 
 #cleanup temp
