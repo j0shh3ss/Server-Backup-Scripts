@@ -24,7 +24,7 @@ Designed to be:
 
 ## 📦 Installation
 
-### 1. Download
+### 1. Download (Git)
 
 Click:
 **Code → Download ZIP**
@@ -34,8 +34,35 @@ Or clone:
 ```bash
 git clone https://github.com/j0shh3ss/Minecraft-Backup-Manager.git
 cd Minecraft-Backup-Manager
+cd scripts
 ```
 
+---
+
+### 1. Download (No Git)
+If you don’t have git installed, you can checkout the latest release directly:
+
+👉 https://github.com/j0shh3ss/Minecraft-Backup-Manager/releases/latest
+
+
+# Download
+
+```bash
+wget https://github.com/j0shh3ss/Minecraft-Backup-Manager/archive/refs/tags/v1.0.tar.gz
+```
+
+# Extract
+```bash
+tar -xzf v1.0.tar.gz
+cd Minecraft-Backup-Manager-1.0
+cd scripts
+```
+Then run:
+
+```bash
+chmod +x install.sh
+./install.sh
+```
 ---
 
 ### 2. Run Installer
@@ -59,6 +86,8 @@ The installer will:
 Run anytime:
 
 ```bash
+cd /Minecraft-Backup-Manager-1.0
+cd scripts
 ./hourly_backup.sh
 ```
 
@@ -67,12 +96,18 @@ Run anytime:
 ## 🔄 Restore a Backup
 
 ```bash
+cd /Minecraft-Backup-Manager-1.0
+cd scripts
+chmod +x restore.sh
 ./restore.sh
 ```
 
 Example:
 
 ```bash
+cd /Minecraft-Backup-Manager-1.0
+cd scripts
+chmod +x restore.sh
 ./restore.sh
 Tmux session name [Minecraft]: World
 Minecraft server root directory (contains world/, versions/, config/, etc.): [/mnt/server/minecraft]: /mnt/server/minecraft
