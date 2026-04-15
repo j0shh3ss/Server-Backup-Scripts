@@ -56,6 +56,7 @@ wget https://github.com/j0shh3ss/Minecraft-Backup-Manager/archive/refs/tags/v1.0
 tar -xzf v1.0.2.tar.gz
 cd Minecraft-Backup-Manager-1.0.2
 cd scripts
+pwd
 ```
 Then run:
 
