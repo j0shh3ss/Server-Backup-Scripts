@@ -199,7 +199,7 @@ Options:
 
 * Designed for servers running inside **tmux**
 * Uses `save-off` to prevent world corruption
-* Backups can use significant disk space depending on retention
+* Backups can use significant disk space depending on retention. Ex: My server directory is 7gb after compression. 24 copies are stored in /hourly. 7 copies are stored in /daily. 4 copies are stored in /weekly. Total = 245GB
 
 ---
 
