@@ -20,6 +20,7 @@ Designed to be:
 * 🔄 **Full server restore support** (complete recovery)
 * 🧰 **Interactive installer** (no manual config needed)
 * 🧹 **Automatic cleanup** (prevents disk overflow)
+* 📁 **Rsync Copying** (saves the disk)
 * 📦 **ZSTD compression** (fast and efficient)
 * 🗑️ **Uninstall script included**
 * ⚙️ **Optional cron setup**
