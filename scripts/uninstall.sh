@@ -46,15 +46,6 @@ if [[ "$DELETE_BACKUPS" =~ ^[Yy]$ ]]; then
     fi
 fi
 
-# ---- REMOVE LOG FILE ----
-
-read -p "Remove log file (/var/log/mc-backup-hourly.log)? (y/n) [n]: " REMOVE_LOG
-REMOVE_LOG=${REMOVE_LOG:-n}
-
-if [[ "$REMOVE_LOG" =~ ^[Yy]$ ]]; then
-    sudo rm -f /var/log/mc-backup-hourly.log || true
-    echo "Log file removed."
-fi
 
 # ---- REMOVE SCRIPT PERMISSIONS (OPTIONAL) ----
 

@@ -22,10 +22,10 @@ echo "==== Minecraft Backup Script Installer ===="
 read -p "Tmux session name [Minecraft]: " SESSION
 SESSION=${SESSION:-Minecraft}
 
-read -p "Path to your server root folder [/mnt/server/minecraft]: " MC_DIR
+read -p "Path to your server root folder (Where /world, /plugins, /config, etc. are located) [/mnt/server/minecraft]: " MC_DIR
 MC_DIR=${MC_DIR:-/mnt/server/minecraft}
 
-read -p "Backup base directory [/mnt/server/minecraft/backups]: " BACKUP_BASE
+read -p "Backup base directory (Where backups will be stored) [/mnt/server/minecraft/backups]: " BACKUP_BASE
 BACKUP_BASE=${BACKUP_BASE:-/mnt/server/minecraft/backups}
 
 # Derived paths
