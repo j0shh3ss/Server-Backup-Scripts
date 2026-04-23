@@ -18,6 +18,8 @@ MC_DIR=${MC_DIR:-/mnt/server/minecraft}
 read -p "Backup base directory (Where backups will be stored) [/mnt/server/minecraft/backups]: " BACKUP_BASE
 BACKUP_BASE=${BACKUP_BASE:-/mnt/server/minecraft/backups}
 
+#ADD CONFIRMATION SCRIPT TO CONFIRM LOCATIONS OF BACKUPS BEFORE RUNNING INSTALL!!!
+
 # Derived paths
 HOURLY_DIR="$BACKUP_BASE/hourly"
 DAILY_DIR="$BACKUP_BASE/daily"
